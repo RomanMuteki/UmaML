@@ -1,20 +1,151 @@
 import tkinter as tk
 from tkinter import ttk
 import pandas as pd
+import joblib, json
 import numpy as np
 import sklearn
 
+def score_to_letter(numb):
+    thresholds = {
+        "<D": [-1000, 2300],
+        "D": [2300, 2900],
+        "D+": [2900, 3500],
+        "C": [3500, 4900],
+        "C+": [4900, 6500],
+        "B": [6500, 8200],
+        "B+": [8200, 10000],
+        "A": [10000, 12100],
+        "A+": [12100, 14500],
+        "S": [14500, 15900],
+        "S+": [15900, 17500],
+        "SS": [17500, 19200],
+        "SS+": [19200, 19600],
+        "Ug": [19600, 100000],
+    }
+    for key, value in thresholds.items():
+        if value[0] <= numb < value[1]:
+            return key
+
+def load_model():
+    model = joblib.load('best_et_20260522_1657.joblib')
+    prep = joblib.load('preprocessor_20260522_1657.joblib')
+    meta = json.load(open('model_meta_20260522_1657.json'))
+
+    return model
+
 def estimate_score():
-    pass
+    dataframe = compile_row_for_model()
+    model = load_model()
+
+    score = model.predict(dataframe)
+    letter = score_to_letter(score)
+    score = str(score)
+    score_result.set(score)
+    letter_result.set(letter)
 
 def compile_row_for_model():
-    pass
+    apt_map = {
+        "S": 8,
+        "A": 7,
+        "B": 6,
+        "C": 5,
+        "D": 4,
+        "E": 3,
+        "F": 2,
+        "G": 1,
+    }
+
+    spd = int(spd_entry.get())
+    sta = int(sta_entry.get())
+    pwr = int(pwr_entry.get())
+    guts = int(guts_entry.get())
+    wit = int(wit_entry.get())
+    ult_lvl = int(ult_lvl_entry.get())
+    inh_ult = int(inherited_ult_entry.get())
+
+    fans = int(fans_entry.get())
+    g1w = int(g1w_spin.get())
+    g1p = int(g1p_spin.get())
+    g2w = int(g2w_spin.get())
+    g2p = int(g2p_spin.get())
+    g3w = int(g3w_spin.get())
+    g3p = int(g3p_spin.get())
+    opw = int(opw_spin.get())
+    preopw = int(preopw_spin.get())
+    exw = int(exw_spin.get())
+    exp = int(exp_spin.get())
+
+    turf_apt = apt_map[turf_spin.get()]
+    dirt_apt = apt_map[dirt_spin.get()]
+    sprint_apt = apt_map[sprint_spin.get()]
+    mile_apt = apt_map[mile_spin.get()]
+    medium_apt = apt_map[medium_spin.get()]
+    long_apt = apt_map[long_spin.get()]
+    front_apt = apt_map[front_spin.get()]
+    pace_apt = apt_map[pacer_spin.get()]
+    late_apt = apt_map[late_spin.get()]
+    end_apt = apt_map[end_spin.get()]
+
+    green_skills = float(green_skills_spin.get())
+    sprint_skills = float(sprint_skills_spin.get())
+    mile_skills = float(mile_skills_spin.get())
+    medium_skills = float(medium_skills_spin.get())
+    long_skills = float(long_skills_spin.get())
+    front_skills = float(front_skills_spin.get())
+    pace_skills = float(pacer_skills_spin.get())
+    late_skills = float(late_skills_spin.get())
+    end_skills = float(end_skills_spin.get())
+    common_skills = float(common_skills_spin.get())
+
+    temp_dict = {
+        "SPD": spd,
+        "STA": sta,
+        "PWR": pwr,
+        "GUTS": guts,
+        "WIT": wit,
+        "ult_lvl": ult_lvl,
+        "inherited_ult": inh_ult,
+        "Fans": fans,
+        "G1_wins": g1w,
+        "G1_prize": g1p,
+        "G2_wins": g2w,
+        "G2_prize": g2p,
+        "G3_wins": g3w,
+        "G3_prize": g3p,
+        "OP_wins": opw,
+        "PreOP_wins": preopw,
+        "Ex_wins": exw,
+        "Ex_prize": exp,
+        "turf_apt": turf_apt,
+        "dirt_apt": dirt_apt,
+        "sprint_apt": sprint_apt,
+        "mile_apt": mile_apt,
+        "medium_apt": medium_apt,
+        "long_apt": long_apt,
+        "front_apt": front_apt,
+        "pace_apt": pace_apt,
+        "late_apt": late_apt,
+        "end_apt": end_apt,
+        "green_skills": green_skills,
+        "sprint_skills": sprint_skills,
+        "mile_skills": mile_skills,
+        "medium_skills": medium_skills,
+        "long_skills": long_skills,
+        "front_skills": front_skills,
+        "pace_skills": pace_skills,
+        "late_skills": late_skills,
+        "end_skills": end_skills,
+        "common_skills": common_skills,
+    }
+    df = pd.DataFrame(temp_dict, index=[0])
+    return df
 
 root = tk.Tk()
 root.title("Umazing calculator")
 root.geometry("1100x500")
-#icon = tk.PhotoImage(file='icon.png')
-#root.iconphoto(False, icon)
+#root.configure(bg="dark sea green")
+icon = tk.PhotoImage(file='icon.png')
+root.iconphoto(False, icon)
 score_result = tk.StringVar(root, value='XXXXX')
 letter_result = tk.StringVar(root, value='G+')
 
@@ -145,7 +276,7 @@ late_label.grid(column=6, row=3, sticky='nsew')
 end_label = ttk.Label(root, text="End Closer Aptitude")
 end_label.grid(column=6, row=4, sticky='nsew')
 
-aptitudes_list = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'G']
+aptitudes_list = ['G', 'F', 'E', 'D', 'C', 'B', 'A', 'S']
 
 turf_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
 turf_spin.grid(column=5, row=0, sticky='nsew')
@@ -221,7 +352,7 @@ deco_frame.grid_columnconfigure(2, weight=1)
 deco_frame.grid_columnconfigure(3, weight=1)
 deco_frame.grid_rowconfigure(0, weight=1)
 
-est_button = ttk.Button(deco_frame, text='Рассчитать!', command=estimate_score)
+est_button = ttk.Button(deco_frame, text='Рассчитать!', command=estimate_score, underline=0)
 est_button.grid(column=0, row=0, sticky='nsew')
 
 res_label = ttk.Label(deco_frame, text='Ожидаемый результат:')
