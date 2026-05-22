@@ -27,17 +27,18 @@ def score_to_letter(numb):
             return key
 
 def load_model():
-    model = joblib.load('best_et_20260522_1657.joblib')
-    prep = joblib.load('preprocessor_20260522_1657.joblib')
-    meta = json.load(open('model_meta_20260522_1657.json'))
+    model = joblib.load('best_elasticnet_20260522_1807.joblib')
+    prep = joblib.load('preprocessor_20260522_1807.joblib')
+    meta = json.load(open('model_meta_20260522_1807.json'))
 
-    return model
+    return model, prep, meta
 
 def estimate_score():
     dataframe = compile_row_for_model()
-    model = load_model()
+    model, prep, meta = load_model()
 
-    score = model.predict(dataframe)[0]
+    raw = dataframe[meta['feature_names']]
+    score = model.predict(prep.transform(raw))[0]
     letter = score_to_letter(score)
     score = str(score)
     score_result.set(score)
@@ -254,8 +255,17 @@ g3p_spin.grid(column=3, row=8, sticky='nsew')
 exp_spin = ttk.Spinbox(root, from_=0, to=3, state='readonly')
 exp_spin.grid(column=3, row=9, sticky='nsew')
 
-turf_label = ttk.Label(root, text="Turf Aptitude")
-turf_label.grid(column=4, row=0, sticky='nsew')
+apt_frame = ttk.LabelFrame(root, text='Aptitudes')
+apt_frame.grid(column=4, row=0, rowspan=1, columnspan=4)
+apt_frame.grid_columnconfigure(0, weight=1)
+apt_frame.grid_columnconfigure(1, weight=1)
+apt_frame.grid_columnconfigure(2, weight=1)
+apt_frame.grid_columnconfigure(3, weight=1)
+apt_frame.grid_rowconfigure(0, weight=1)
+
+
+turf_label = ttk.Label(apt_frame, text="Turf Aptitude")
+turf_label.grid(column=0, row=0, sticky='nsew')
 sprint_label = ttk.Label(root, text="Sprint Aptitude")
 sprint_label.grid(column=4, row=1, sticky='nsew')
 mile_label = ttk.Label(root, text="Mile Aptitude")
@@ -265,8 +275,8 @@ medium_label.grid(column=4, row=3, sticky='nsew')
 long_label = ttk.Label(root, text="Long Aptitude")
 long_label.grid(column=4, row=4, sticky='nsew')
 
-dirt_label = ttk.Label(root, text="Dirt Aptitude")
-dirt_label.grid(column=6, row=0, sticky='nsew')
+dirt_label = ttk.Label(apt_frame, text="Dirt Aptitude")
+dirt_label.grid(column=2, row=0, sticky='nsew')
 front_label = ttk.Label(root, text="Front Runner Aptitude")
 front_label.grid(column=6, row=1, sticky='nsew')
 pacer_label = ttk.Label(root, text="Pace Chaser Aptitude")
@@ -278,8 +288,8 @@ end_label.grid(column=6, row=4, sticky='nsew')
 
 aptitudes_list = ['G', 'F', 'E', 'D', 'C', 'B', 'A', 'S']
 
-turf_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
-turf_spin.grid(column=5, row=0, sticky='nsew')
+turf_spin = ttk.Spinbox(apt_frame, values=aptitudes_list, state='readonly')
+turf_spin.grid(column=1, row=0, sticky='nsew')
 sprint_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
 sprint_spin.grid(column=5, row=1, sticky='nsew')
 mile_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
@@ -289,8 +299,8 @@ medium_spin.grid(column=5, row=3, sticky='nsew')
 long_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
 long_spin.grid(column=5, row=4, sticky='nsew')
 
-dirt_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
-dirt_spin.grid(column=7, row=0, sticky='nsew')
+dirt_spin = ttk.Spinbox(apt_frame, values=aptitudes_list, state='readonly')
+dirt_spin.grid(column=3, row=0, sticky='nsew')
 front_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
 front_spin.grid(column=7, row=1, sticky='nsew')
 pacer_spin = ttk.Spinbox(root, values=aptitudes_list, state='readonly')
