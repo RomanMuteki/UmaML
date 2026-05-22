@@ -27,9 +27,9 @@ def score_to_letter(numb):
             return key
 
 def load_model():
-    model = joblib.load('best_elasticnet_20260522_1807.joblib')
-    prep = joblib.load('preprocessor_20260522_1807.joblib')
-    meta = json.load(open('model_meta_20260522_1807.json'))
+    model = joblib.load('base/best_elasticnet_20260522_1847.joblib')
+    prep = joblib.load('base/preprocessor_20260522_1847.joblib')
+    meta = json.load(open('base/model_meta_20260522_1847.json'))
 
     return model, prep, meta
 
