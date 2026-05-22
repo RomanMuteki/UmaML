@@ -37,7 +37,7 @@ def estimate_score():
     dataframe = compile_row_for_model()
     model = load_model()
 
-    score = model.predict(dataframe)
+    score = model.predict(dataframe)[0]
     letter = score_to_letter(score)
     score = str(score)
     score_result.set(score)
@@ -105,7 +105,6 @@ def compile_row_for_model():
         "WIT": wit,
         "ult_lvl": ult_lvl,
         "inherited_ult": inh_ult,
-        "Fans": fans,
         "G1_wins": g1w,
         "G1_prize": g1p,
         "G2_wins": g2w,
@@ -116,6 +115,7 @@ def compile_row_for_model():
         "PreOP_wins": preopw,
         "Ex_wins": exw,
         "Ex_prize": exp,
+        "Fans": fans,
         "turf_apt": turf_apt,
         "dirt_apt": dirt_apt,
         "sprint_apt": sprint_apt,
@@ -127,15 +127,15 @@ def compile_row_for_model():
         "late_apt": late_apt,
         "end_apt": end_apt,
         "green_skills": green_skills,
-        "sprint_skills": sprint_skills,
-        "mile_skills": mile_skills,
-        "medium_skills": medium_skills,
-        "long_skills": long_skills,
-        "front_skills": front_skills,
-        "pace_skills": pace_skills,
-        "late_skills": late_skills,
-        "end_skills": end_skills,
-        "common_skills": common_skills,
+        "skills_sprint": sprint_skills,
+        "skills_mile": mile_skills,
+        "skills_medium": medium_skills,
+        "skills_long": long_skills,
+        "skills_front": front_skills,
+        "skills_pace": pace_skills,
+        "skills_late": late_skills,
+        "skills_end": end_skills,
+        "skills_universal": common_skills,
     }
     df = pd.DataFrame(temp_dict, index=[0])
     return df
@@ -222,7 +222,7 @@ g2w_label = ttk.Label(root, text="Побед в G2")
 g2w_label.grid(column=2, row=2, sticky='nsew')
 g3w_label = ttk.Label(root, text="Побед в G3")
 g3w_label.grid(column=2, row=3, sticky='nsew')
-opw_label = ttk.Label(root, text="Побед в OPW")
+opw_label = ttk.Label(root, text="Побед в OP")
 opw_label.grid(column=2, row=4, sticky='nsew')
 exw_label = ttk.Label(root, text="Побед в EX")
 exw_label.grid(column=2, row=5, sticky='nsew')
@@ -328,7 +328,7 @@ sprint_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state=
 sprint_skills_spin.grid(column=5, row=6, sticky='nsew')
 mile_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state='readonly')
 mile_skills_spin.grid(column=5, row=7, sticky='nsew')
-medium_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0., state='readonly')
+medium_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state='readonly')
 medium_skills_spin.grid(column=5, row=8, sticky='nsew')
 long_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state='readonly')
 long_skills_spin.grid(column=5, row=9, sticky='nsew')
@@ -337,7 +337,7 @@ common_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state=
 common_skills_spin.grid(column=7, row=5, sticky='nsew')
 front_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state='readonly')
 front_skills_spin.grid(column=7, row=6, sticky='nsew')
-pacer_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0., state='readonly')
+pacer_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state='readonly')
 pacer_skills_spin.grid(column=7, row=7, sticky='nsew')
 late_skills_spin = ttk.Spinbox(root, from_=0.0, to=20.0, increment=0.5, state='readonly')
 late_skills_spin.grid(column=7, row=8, sticky='nsew')
